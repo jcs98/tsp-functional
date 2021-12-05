@@ -2,6 +2,10 @@ module Lib
     ( runMain
     ) where
 
+import System.IO(readFile)
+import System.Environment(getArgs, getProgName)
+import System.Exit(die)
+
 type Point = (Int, Int)
 
 squaredDistance :: Point -> Point -> Int
@@ -21,4 +25,12 @@ pathDistance cities = sum $ zipWith distance path (tail path)
     where path = (last cities):cities 
 
 runMain :: IO ()
-runMain = putStrLn $ show $ pathDistance $ makeCities $ "0 0 3 4 6 8"
+runMain = do
+   args <- getArgs
+   case args of
+      [filename] -> do
+         corpus <- readFile filename
+         putStrLn $ show $ pathDistance $ makeCities corpus
+      _ -> do
+         pn <- getProgName
+         die $ "Usage: " ++ pn ++ " <filename>"
