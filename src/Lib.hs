@@ -19,22 +19,25 @@ makeCities :: String -> [Point]
 makeCities corpus = makePairs $ map read $ words corpus
     where
         makePairs [] = []
-        makePairs (p:q:r) = (p, q):(makePairs r)
+        makePairs [p] = [(p, p)] -- replicate last coordinate if odd numbers
+        makePairs (p:q:r) = (p, q) : makePairs r
 
 pathDistance :: [Point] -> Int
 pathDistance cities = sum $ zipWith distance path (tail path)
-    where path = (last cities):cities
+    where path = last cities : cities
 
+-- Consider all permutations while keeping starting point fixed
 minPathDistance :: [Point] -> Int
-minPathDistance cities = minimum $ map pathDistance $ permutations cities
+minPathDistance [] = -1
+minPathDistance (c:cities) = minimum $ map (pathDistance . (c :)) $ permutations cities
 
 runMain :: IO ()
 runMain = do
    args <- getArgs
    case args of
       [filename] -> do
-         corpus <- readFile filename
-         putStrLn $ show $ minPathDistance $ makeCities corpus
+        corpus <- readFile filename
+        print $ minPathDistance $ makeCities corpus
       _ -> do
          pn <- getProgName
          die $ "Usage: " ++ pn ++ " <filename>"
