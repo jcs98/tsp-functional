@@ -6,6 +6,7 @@ import System.IO(readFile)
 import System.Environment(getArgs, getProgName)
 import System.Exit(die)
 import Data.List(permutations)
+import Control.Parallel.Strategies
 
 type Point = (Int, Int)
 
@@ -31,13 +32,20 @@ minPathDistance :: [Point] -> Int
 minPathDistance [] = -1
 minPathDistance (c:cities) = minimum $ map (pathDistance . (c :)) $ permutations cities
 
+parallelMinPathDistance :: [Point] -> Int
+parallelMinPathDistance [] = -1
+parallelMinPathDistance (c:cities) = minimum $ parMap rdeepseq (pathDistance . (c :)) $ permutations cities
+
 runMain :: IO ()
 runMain = do
    args <- getArgs
    case args of
-      [filename] -> do
+      ["-s", filename] -> do
         corpus <- readFile filename
         print $ minPathDistance $ makeCities corpus
+      ["-p", filename] -> do
+        corpus <- readFile filename
+        print $ parallelMinPathDistance $ makeCities corpus
       _ -> do
          pn <- getProgName
-         die $ "Usage: " ++ pn ++ " <filename>"
+         die $ "Usage: " ++ pn ++ " [-s|-p] <filename>"
