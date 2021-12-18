@@ -29,6 +29,7 @@ crossover parentA parentB = c1 ++ c2
 nextGen :: [[Point]] -> [[Point]]
 nextGen pop =
   take (length pop) $
-    sortBy
-      (\p1 p2 -> compare (pathDistance p1) (pathDistance p2))
-      [crossover pa pb | (i, pa) <- zip [0 ..] pop, (j, pb) <- zip [0 ..] pop, i < j]
+    map fst $
+      sortBy (\p1 p2 -> compare (snd p1) (snd p2)) $
+        map (\p -> (p, pathDistance p)) $
+          [crossover pa pb | (i, pa) <- zip [0 ..] pop, (j, pb) <- zip [0 ..] pop, i < j]
