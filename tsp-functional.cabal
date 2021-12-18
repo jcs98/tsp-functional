@@ -25,7 +25,10 @@ source-repository head
 
 library
   exposed-modules:
+      GeneticUtils
       Lib
+      Types
+      Utils
   other-modules:
       Paths_tsp_functional
   hs-source-dirs:
@@ -33,6 +36,7 @@ library
   build-depends:
       base >=4.7 && <5
     , parallel
+    , random
   default-language: Haskell2010
 
 executable tsp-functional-exe
@@ -45,6 +49,7 @@ executable tsp-functional-exe
   build-depends:
       base >=4.7 && <5
     , parallel
+    , random
     , tsp-functional
   default-language: Haskell2010
 
@@ -59,5 +64,6 @@ test-suite tsp-functional-test
   build-depends:
       base >=4.7 && <5
     , parallel
+    , random
     , tsp-functional
   default-language: Haskell2010

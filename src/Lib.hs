@@ -5,29 +5,12 @@ where
 
 import Control.Parallel.Strategies
 import Data.List (permutations)
+import GeneticUtils
 import System.Environment (getArgs, getProgName)
 import System.Exit (die)
 import System.IO (readFile)
-
-type Point = (Int, Int)
-
-squaredDistance :: Point -> Point -> Int
-squaredDistance (x1, y1) (x2, y2) = ((x2 - x1) ^ 2) + ((y2 - y1) ^ 2)
-
-distance :: Point -> Point -> Int
-distance a b = floor . sqrt . fromIntegral $ squaredDistance a b
-
-makeCities :: String -> [Point]
-makeCities corpus = makePairs $ map read $ words corpus
-  where
-    makePairs [] = []
-    makePairs [p] = [(p, p)] -- replicate last coordinate if odd numbers
-    makePairs (p : q : r) = (p, q) : makePairs r
-
-pathDistance :: [Point] -> Int
-pathDistance cities = sum $ zipWith distance path (tail path)
-  where
-    path = last cities : cities
+import Types
+import Utils
 
 -- Consider all permutations while keeping starting point fixed
 minPathDistance :: [Point] -> Int
@@ -52,6 +35,14 @@ chunkedParallelMinPathDistance (c : cities) chunkSize =
       . map (pathDistance . (c :))
       $ permutations cities
 
+gaMinPathDistance :: [Point] -> Int -> Int -> Int
+gaMinPathDistance [] _ _ = -1
+gaMinPathDistance cities popSize rounds =
+  minimum $ map pathDistance finalPop
+  where
+    population = replicate popSize cities
+    finalPop = foldr ($) population (replicate rounds nextGen)
+
 runMain :: IO ()
 runMain = do
   args <- getArgs
@@ -62,9 +53,12 @@ runMain = do
     ["-p", filename] -> do
       corpus <- readFile filename
       print $ parallelMinPathDistance $ makeCities corpus
-    ['-' : 'c' : n, filename] -> do
+    ["-c", ':' : 'n' : n, filename] -> do
       corpus <- readFile filename
       print $ chunkedParallelMinPathDistance (makeCities corpus) (read n)
+    ["-g", ':' : 's' : s, ':' : 'r' : r, filename] -> do
+      corpus <- readFile filename
+      print $ gaMinPathDistance (makeCities corpus) (read s) (read r)
     _ -> do
       pn <- getProgName
-      die $ "Usage: " ++ pn ++ " [-s|-p|-cN] <filename>"
+      die $ "Usage: " ++ pn ++ " [-s|-p|-c :nN|-g :sN :rN] <filename>"
