@@ -3,6 +3,7 @@ module Utils
     squaredDistance,
     makeCities,
     pathDistance,
+    squaredPathDistance,
     getRandomFromRange,
   )
 where
@@ -26,6 +27,11 @@ makeCities corpus = makePairs $ map read $ words corpus
 
 pathDistance :: [Point] -> Int
 pathDistance cities = sum $ zipWith distance path (tail path)
+  where
+    path = last cities : cities
+
+squaredPathDistance :: [Point] -> Int
+squaredPathDistance cities = sum $ zipWith squaredDistance path (tail path)
   where
     path = last cities : cities
 

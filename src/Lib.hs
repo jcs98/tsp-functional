@@ -35,9 +35,9 @@ chunkedParallelMinPathDistance (c : cities) chunkSize =
       . map (pathDistance . (c :))
       $ permutations cities
 
-gaMinPathDistance :: [Point] -> Int -> Int -> Int
-gaMinPathDistance [] _ _ = -1
-gaMinPathDistance cities popSize rounds =
+geneticMinPathDistance :: [Point] -> Int -> Int -> Int
+geneticMinPathDistance [] _ _ = -1
+geneticMinPathDistance cities popSize rounds =
   minimum $ map pathDistance finalPop
   where
     population = replicate popSize cities
@@ -58,7 +58,7 @@ runMain = do
       print $ chunkedParallelMinPathDistance (makeCities corpus) (read n)
     ["-g", ':' : 's' : s, ':' : 'r' : r, filename] -> do
       corpus <- readFile filename
-      print $ gaMinPathDistance (makeCities corpus) (read s) (read r)
+      print $ geneticMinPathDistance (makeCities corpus) (read s) (read r)
     _ -> do
       pn <- getProgName
       die $ "Usage: " ++ pn ++ " [-s|-p|-c :nN|-g :sN :rN] <filename>"
