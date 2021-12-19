@@ -47,7 +47,13 @@ geneticMinPathDistance cities popSize rounds =
   minimum $ map pathDistance finalPop
   where
     population = replicate popSize cities
-    finalPop = foldr ($) population (replicate rounds nextGen)
+    randomList = randomListInRange 0 (length cities - 1)
+    finalPop =
+      fst $
+        foldr
+          (\f (p, r) -> (f p r, tail r))
+          (population, randomList)
+          (replicate rounds nextGen)
 
 runMain :: IO ()
 runMain = do

@@ -4,12 +4,11 @@ module Utils
     makeCities,
     pathDistance,
     squaredPathDistance,
-    getRandomFromRange,
+    randomListInRange,
   )
 where
 
-import GHC.IO (unsafePerformIO)
-import System.Random (getStdRandom, randomR)
+import System.Random (mkStdGen, randomRs)
 import Types
 
 squaredDistance :: Point -> Point -> Int
@@ -35,5 +34,7 @@ squaredPathDistance cities = sum $ zipWith squaredDistance path (tail path)
   where
     path = last cities : cities
 
-getRandomFromRange :: Int -> Int -> Int
-getRandomFromRange s e = unsafePerformIO $ getStdRandom $ randomR (s, e)
+randomListInRange :: Int -> Int -> [Int]
+randomListInRange s e = randomRs (s, e) rg
+  where
+    rg = mkStdGen 0
