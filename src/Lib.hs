@@ -20,6 +20,12 @@ minPathDistance (c : cities) =
     map (pathDistance . (c :)) $
       permutations cities
 
+batchMinPathDistance :: [[Point]] -> [Int]
+batchMinPathDistance = map minPathDistance
+
+parallelBatchMinPathDistance :: [[Point]] -> [Int]
+parallelBatchMinPathDistance = parMap rseq minPathDistance
+
 parallelMinPathDistance :: [Point] -> Int
 parallelMinPathDistance [] = -1
 parallelMinPathDistance (c : cities) =
@@ -50,6 +56,12 @@ runMain = do
     ["-s", filename] -> do
       corpus <- readFile filename
       print $ minPathDistance $ makeCities corpus
+    ["--batch", "-s", filename] -> do
+      corpus <- readFile filename
+      print $ batchMinPathDistance $ replicate 16 $ makeCities corpus
+    ["--batch", "-p", filename] -> do
+      corpus <- readFile filename
+      print $ parallelBatchMinPathDistance $ replicate 16 $ makeCities corpus
     ["-p", filename] -> do
       corpus <- readFile filename
       print $ parallelMinPathDistance $ makeCities corpus
