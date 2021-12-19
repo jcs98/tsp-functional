@@ -5,14 +5,14 @@
 
 ## Build and Run    
 `stack build`    
-`stack exec tsp-functional-exe [-s|-p|-c :nN|-g :sN :rN] <filename>`    
+`stack exec tsp-functional-exe [-s|-p|-c :nN|-s :bN|-sp :bN|-g :pN :gN|-g :pN :gN :bN|-gp :pN :gN :bN] <filename>`    
 
 or
 
 `stack build --profile`    
-`stack exec tsp-functional-exe --profile -- [-s|-p|-c :nN|-g :sN :rN] <filename> +RTS -N4 -s -p -ls`    
+`stack exec tsp-functional-exe --profile -- [-s|-p|-c :nN|-s :bN|-sp :bN|-g :pN :gN|-g :pN :gN :bN|-gp :pN :gN :bN] <filename> +RTS -N4 -s -p -ls`    
 (-s: spark info, -p: profiling, -ls: eventlog)    
-(N = any integer)    
+(N = any integer, :b for batch size)    
 
 ## Install
 `stack install`
@@ -36,12 +36,22 @@ or
 ## Sample running commands
 `stack setup`    
 `stack build`    
-#### Sequential
-`stack exec tsp-functional-exe -- -s /Users/jcs/projects/tsp-functional/input.txt +RTS -s`
-#### Parallel
-`stack exec tsp-functional-exe -- -p /Users/jcs/projects/tsp-functional/input.txt +RTS -s`
-#### Parallel with Chunk size
-`stack exec tsp-functional-exe -- -c :n1024 /Users/jcs/projects/tsp-functional/input.txt +RTS -s`
-#### Genetic Algorithm with Population Size and Number of Rounds
-`stack exec tsp-functional-exe -- -g :s64 :r128 /Users/jcs/projects/tsp-functional/input.txt +RTS -s`
+
+#### Bruteforce sequential
+`stack exec tsp-functional-exe -- -s /Users/jcs/projects/tsp-functional/input.txt`
+#### Bruteforce, calculate path distance in parallel
+`stack exec tsp-functional-exe -- -p /Users/jcs/projects/tsp-functional/input.txt +RTS -N4`
+#### Bruteforce, calculate path distance in parallel with Chunk size
+`stack exec tsp-functional-exe -- -c :n1024 /Users/jcs/projects/tsp-functional/input.txt +RTS -N4`
+#### Bruteforce for batch of city groups
+`stack exec tsp-functional-exe -- -s :b128 /Users/jcs/projects/tsp-functional/input.txt`
+#### Bruteforce for batch of city groups, each group in parallel
+`stack exec tsp-functional-exe -- -sp :b128 /Users/jcs/projects/tsp-functional/input.txt +RTS -N4`
+
+#### Genetic Algorithm with Population Size and Number of Generations
+`stack exec tsp-functional-exe -- -g :p64 :g128 /Users/jcs/projects/tsp-functional/input.txt`
+#### Genetic Algorithm for batch of city groups
+`stack exec tsp-functional-exe -- -g :p64 :g128 :b10 /Users/jcs/projects/tsp-functional/input.txt`
+#### Genetic Algorithm for batch of city groups, each group in parallel
+`stack exec tsp-functional-exe -- -gp :p64 :g128 :b10 /Users/jcs/projects/tsp-functional/input.txt +RTS -N4`
 

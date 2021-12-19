@@ -121,4 +121,4 @@ runMain = do
     -- invalid running params
     _ -> do
       pn <- getProgName
-      die $ "Usage: " ++ pn ++ " [-s|-p|-c :nN|-g :sN :rN] <filename>"
+      die $ "Usage: " ++ pn ++ " [-s|-p|-c :nN|-s :bN|-sp :bN|-g :pN :gN|-g :pN :gN :bN|-gp :pN :gN :bN] <filename>"
